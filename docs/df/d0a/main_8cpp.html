@@ -102,6 +102,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">main.cpp File Reference</div>  </div>
@@ -112,21 +114,111 @@ $(function() {
 <code>#include &lt;boost/optional.hpp&gt;</code><br />
 <code>#include &lt;boost/filesystem.hpp&gt;</code><br />
 <code>#include &lt;boost/program_options.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/algebra/curves/alt_bn128.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/algebra/fields/arithmetic_params/alt_bn128.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/algebra/curves/params/multiexp/alt_bn128.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/algebra/curves/params/wnaf/alt_bn128.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/blueprint/plonk.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/components/hashes/poseidon/plonk/poseidon_15_wires.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/components/algebra/curves/pasta/plonk/variable_base_endo_scalar_mul_15_wires.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/hash/algorithm/hash.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/hash/keccak.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/hash/sha2.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/pubkey/algorithm/sign.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/pubkey/eddsa.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/algorithms/generate.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/snark/systems/plonk/pickles/proof.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/snark/systems/plonk/redshift/prover.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/snark/systems/plonk/redshift/preprocessor.hpp&gt;</code><br />
+<code>#include &lt;nil/crypto3/zk/math/non_linear_combination.hpp&gt;</code><br />
 <code>#include &lt;<a class="el" href="../../d0/d53/sexp_8hpp_source.html">nil/mina/auxproof/sexp.hpp</a>&gt;</code><br />
 </div><div class="textblock"><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="../../closed.png" alt="+"/> Include dependency graph for main.cpp:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><iframe scrolling="no" frameborder="0" src="../../da/dce/main_8cpp__incl.svg" width="1035" height="187"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+<div class="center"><iframe scrolling="no" frameborder="0" src="../../da/dce/main_8cpp__incl.svg" width="4186" height="231"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
 </div>
 </div>
 </div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d89/structredshift__params.html">redshift_params</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a1ecc77a2014fac6ca1fa11ee9bcdf041"><td class="memItemLeft" align="right" valign="top">typedef zk::snark::redshift_params&lt; <a class="el" href="../../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21">field_type</a>, <a class="el" href="../../dc/d89/structredshift__params.html#ab2ee83623de68d878564938d4081d5e6">redshift_params::witness_columns</a>, <a class="el" href="../../dc/d89/structredshift__params.html#af1df76d6f944793ecca3cadf73f97dfc">redshift_params::public_input_columns</a>, <a class="el" href="../../dc/d89/structredshift__params.html#af2b54e3793e8d7cc22a125d507e7dd0f">redshift_params::constant_columns</a>, <a class="el" href="../../dc/d89/structredshift__params.html#af7ee22edfcf36b8fbbcfa7f7ddf30151">redshift_params::selector_columns</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d0a/main_8cpp.html#a1ecc77a2014fac6ca1fa11ee9bcdf041">circuit_params</a></td></tr>
+<tr class="separator:a1ecc77a2014fac6ca1fa11ee9bcdf041"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f1a1383ceea181836f2f8bfc049b304"><td class="memItemLeft" align="right" valign="top">typedef algebra::curves::alt_bn128&lt; 254 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d0a/main_8cpp.html#a5f1a1383ceea181836f2f8bfc049b304">curve_type</a></td></tr>
+<tr class="separator:a5f1a1383ceea181836f2f8bfc049b304"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc096ee4f4e16f4f807240ddc0f16b21"><td class="memItemLeft" align="right" valign="top">typedef curve_type::base_field_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21">field_type</a></td></tr>
+<tr class="separator:abc096ee4f4e16f4f807240ddc0f16b21"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a191ffe4b7bae585edbd7569f1faa50fb"><td class="memItemLeft" align="right" valign="top">typedef zk::commitments::fri&lt; <a class="el" href="../../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21">field_type</a>, <a class="el" href="../../dc/d89/structredshift__params.html#a74c7df8409b4554b0fe29d8b1eedcbaa">redshift_params::merkle_hash_type</a>, <a class="el" href="../../dc/d89/structredshift__params.html#a87ab39d9da6706a58b2bf04364969278">redshift_params::transcript_hash_type</a>, m &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d0a/main_8cpp.html#a191ffe4b7bae585edbd7569f1faa50fb">fri_type</a></td></tr>
+<tr class="separator:a191ffe4b7bae585edbd7569f1faa50fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a0ddf1224851353fc92bfbff6f499fa97"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d0a/main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97">main</a> (int argc, char *argv[])</td></tr>
 <tr class="separator:a0ddf1224851353fc92bfbff6f499fa97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a1ecc77a2014fac6ca1fa11ee9bcdf041"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ecc77a2014fac6ca1fa11ee9bcdf041">&#9670;&nbsp;</a></span>circuit_params</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef zk::snark::redshift_params&lt;<a class="el" href="../../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21">field_type</a>, <a class="el" href="../../dc/d89/structredshift__params.html#ab2ee83623de68d878564938d4081d5e6">redshift_params::witness_columns</a>, <a class="el" href="../../dc/d89/structredshift__params.html#af1df76d6f944793ecca3cadf73f97dfc">redshift_params::public_input_columns</a>, <a class="el" href="../../dc/d89/structredshift__params.html#af2b54e3793e8d7cc22a125d507e7dd0f">redshift_params::constant_columns</a>, <a class="el" href="../../dc/d89/structredshift__params.html#af7ee22edfcf36b8fbbcfa7f7ddf30151">redshift_params::selector_columns</a>&gt; <a class="el" href="../../df/d0a/main_8cpp.html#a1ecc77a2014fac6ca1fa11ee9bcdf041">circuit_params</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5f1a1383ceea181836f2f8bfc049b304"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f1a1383ceea181836f2f8bfc049b304">&#9670;&nbsp;</a></span>curve_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef algebra::curves::alt_bn128&lt;254&gt; <a class="el" href="../../df/d0a/main_8cpp.html#a5f1a1383ceea181836f2f8bfc049b304">curve_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abc096ee4f4e16f4f807240ddc0f16b21"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc096ee4f4e16f4f807240ddc0f16b21">&#9670;&nbsp;</a></span>field_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef curve_type::base_field_type <a class="el" href="../../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21">field_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a191ffe4b7bae585edbd7569f1faa50fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a191ffe4b7bae585edbd7569f1faa50fb">&#9670;&nbsp;</a></span>fri_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef zk::commitments::fri&lt;<a class="el" href="../../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21">field_type</a>, <a class="el" href="../../dc/d89/structredshift__params.html#a74c7df8409b4554b0fe29d8b1eedcbaa">redshift_params::merkle_hash_type</a>, <a class="el" href="../../dc/d89/structredshift__params.html#a87ab39d9da6706a58b2bf04364969278">redshift_params::transcript_hash_type</a>, m&gt; <a class="el" href="../../df/d0a/main_8cpp.html#a191ffe4b7bae585edbd7569f1faa50fb">fri_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a0ddf1224851353fc92bfbff6f499fa97"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0ddf1224851353fc92bfbff6f499fa97">&#9670;&nbsp;</a></span>main()</h2>
@@ -166,7 +258,7 @@ Functions</h2></td></tr>
 </div>
 <hr class="footer"/>
 <address class="footer"><!--<small>
-Generated on Fri Nov 12 2021 00:04:11 for Mina Protocol In-EVM State Verification by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 24 2022 20:19:35 for Mina Protocol In-EVM State Verification by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="../../doxygen.png" alt="doxygen"/>
 </a> 1.9.1
 </small>--></address>

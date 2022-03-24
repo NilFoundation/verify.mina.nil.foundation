@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['iterator_79',['iterator',['../d2/d57/structnil_1_1sexp__argument__iterator.html#ad9d9041c58ff28c1d6bd33db21402039',1,'nil::sexp_argument_iterator']]]
+  ['field_5ftype_103',['field_type',['../df/d0a/main_8cpp.html#abc096ee4f4e16f4f807240ddc0f16b21',1,'main.cpp']]],
+  ['fri_5ftype_104',['fri_type',['../df/d0a/main_8cpp.html#a191ffe4b7bae585edbd7569f1faa50fb',1,'main.cpp']]]
 ];

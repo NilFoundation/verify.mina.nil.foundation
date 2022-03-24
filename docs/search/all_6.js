@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['index_2emd_18',['index.md',['../df/dcf/index_8md.html',1,'']]],
-  ['is_5fnil_19',['is_nil',['../df/da3/structnil_1_1sexp.html#a28d51baccf54d7001bae61286227b0ca',1,'nil::sexp']]],
-  ['is_5fsexp_20',['is_sexp',['../df/da3/structnil_1_1sexp.html#a39bcdac586fdbba68ef902511144fc2d',1,'nil::sexp']]],
-  ['is_5fstring_21',['is_string',['../df/da3/structnil_1_1sexp.html#a045495dbd93b50e6c180f913b5426aca',1,'nil::sexp']]],
-  ['iterator_22',['iterator',['../d2/d57/structnil_1_1sexp__argument__iterator.html#ad9d9041c58ff28c1d6bd33db21402039',1,'nil::sexp_argument_iterator']]]
+  ['get_5fchild_20',['get_child',['../df/da3/structnil_1_1sexp.html#aa9fb2207d1ce80939ff644172a65c981',1,'nil::sexp']]],
+  ['get_5fchild_5fby_5fpath_21',['get_child_by_path',['../df/da3/structnil_1_1sexp.html#a6653e674fb62cbdfcffdffb885e46532',1,'nil::sexp']]],
+  ['get_5fstring_22',['get_string',['../df/da3/structnil_1_1sexp.html#ab2c5c630fd9e553e4811e23dd1feb203',1,'nil::sexp']]]
 ];
