@@ -26,7 +26,7 @@
 
                         <div class="input-block">
                             <div class="label">First of all, we need Mina's
-                                state proof.<br>
+                                state proof and it's verification key.<br>
                                 When Chainsafe finish their <a href="https://github.com/ChainSafe/mina-rs">
                                     Mina protocol implementation</a>,<br>
                                 it will be
@@ -37,9 +37,16 @@
                             <div class="input-control">
                                 <input type="text" class="required"
                                                    autocomplete="off" 
-                                                   value="https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/genesis_proof_ef3659d87a794d5c0159273bc7e596fe7a92b766a0aeb4be3437f582e716697a"
-                                                   placeholder="S-Expr-formatted Mina state proof (or a link)(usually starts with '((statement((proof_state(...'">
+                                                   value="https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/proof_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json"
+                                                   placeholder="JSON-formatted Mina state proof (protocolStateProof)">
                             </div>
+                            <div class="input-control">
+                                <input type="text" class="required"
+                                                   autocomplete="off" 
+                                                   value="https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/vk_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json"
+                                                   placeholder="JSON-formatted Mina's state proof verification key (blockchainVerificationKey)">
+                            </div>
+
                             <div class="input-control">
                                 <input id="toggle-on-q2" class="toggle toggle-left" name="q2" value="yes" type="radio">
                                 <label for="toggle-on-q2" class="btn
