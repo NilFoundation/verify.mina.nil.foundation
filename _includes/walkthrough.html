@@ -1,4 +1,7 @@
 <!-- Header -->
+<script src="../js/auxProofGen.js"></script>
+<script src="../js/bundle.js"></script>
+
 <header>
     <div class="container">
         <div class="row">
@@ -36,15 +39,27 @@
                                 in here already.</div>
                             <div class="input-control">
                                 <input type="text" class="required"
-                                                   autocomplete="off" 
-                                                   value="https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/proof_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json"
-                                                   placeholder="JSON-formatted Mina state proof (protocolStateProof)">
+                                       autocomplete="off"
+                                       value = ""
+                                       id = "mina-state-proof-base64"
+                                       placeholder="JSON-formatted Mina state proof (protocolStateProof)">
+                                <script>
+                                    fetch ("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/proof_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json")
+                                        .then(result => result.json())
+                                        .then(data => document.getElementById("mina-state-proof-base64").value = JSON.stringify(data))
+                                </script>
                             </div>
                             <div class="input-control">
                                 <input type="text" class="required"
-                                                   autocomplete="off" 
-                                                   value="https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/vk_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json"
-                                                   placeholder="JSON-formatted Mina's state proof verification key (blockchainVerificationKey)">
+                                       autocomplete="off"
+                                       value = ""
+                                       id = "mina-state-proof"
+                                       placeholder="JSON-formatted Mina's state proof verification key (blockchainVerificationKey)">
+                                <script>
+                                    fetch ("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/vk_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json")
+                                        .then(result => result.json())
+                                        .then(data => document.getElementById("mina-state-proof").value = JSON.stringify(data))
+                                </script>
                             </div>
 
                             <div class="input-control">
@@ -62,56 +77,36 @@
                             <div class="label">Now, state proof needs to be
                                 preprocessed. <br> Wait a minute, while auxiliary
                                 proof generator goes
-                                <div class="tickerwrapper">
-                                    <ul class='list'>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                        <li class='listitem'>
-                                            <span>rrrrrrrrrrrrrrrrrrr</span>
-                                        </li>
-                                    </ul>
+                                <div class="input-control">
+                                    <input type="text" class="required"
+                                           autocomplete="off"
+                                           value = ""
+                                           id = "data-blob"
+                                           placeholder="JSON-formatted Mina's state proof verification key (blockchainVerificationKey)">
+
                                 </div>
+                                <div class="input-control">
+                                    <input type="text" class="required"
+                                           autocomplete="off"
+                                           value = ""
+                                           id = "passphrase"
+                                           placeholder="passphrase">
+                                </div>
+                                <script>
+                                    Module['onRuntimeInitialized'] = function () {
+                                            let t = ccall('proof_gen', // name of C function
+                                                'string', // return type
+                                                null, // argument types
+                                                null // arguments
+                                            );
+                                            t = t.slice(0, -1);
+                                            document.getElementById("data-blob").value = t;
+                                        }
+                                </script>
                                 <br>
                             </div>
                             <div class="input-control">
-                                <input id="toggle-on-q3" class="toggle toggle-left" name="q3" value="yes" type="radio">
+                                <input id="toggle-on-q3" class="toggle toggle-left" name="q3" value="yes" type="radio" onclick='myBundle.verifyPlaceholderUnifiedAddition(document.getElementById("data-blob").value, document.getElementById("passphrase").value).then(res => document.getElementById("proof-result").value = "Result verify: " + res.verify + " Gas value: " + res.gasUsed)'>
                                 <label for="toggle-on-q3" class="btn
                                                                     btn-walkthrough"><span>Y</span> Ready. Next step.</label>
                                 <input id="toggle-off-q3" class="toggle toggle-right" name="q3" value="no" type="radio">
@@ -133,6 +128,10 @@
                                 <br>
                             </div>
                             <div class="input-control">
+                                <input type="text" class="required"
+                                       autocomplete="off"
+                                       value = ""
+                                       id = "proof-result">
                                 <input id="toggle-on-q4" class="toggle
                                                                  toggle-left" name="q4" value="yes" type="radio">
                                 <label for="toggle-on-q4" class="btn
