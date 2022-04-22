@@ -64,6 +64,7 @@
                             <script>
                                 Module['onRuntimeInitialized'] = () => {
                                     document.getElementById('data-blob').value = 0;
+                                    document.getElementById('data-blob-input').style.display = 'none';
                                 }
                             </script>
                             <div class="input-control">
@@ -78,6 +79,8 @@
                                             t = t.slice(0, -1);
 
                                             document.getElementById('data-blob').value = t;
+                                            document.getElementById('ticker').style.display = 'none';
+                                            document.getElementById('data-blob-input').style.display = 'block';
                                         }
                                     ">
                                 <label for="toggle-on-q2" class="btn
@@ -93,7 +96,53 @@
                             <div class="label">Now, state proof needs to be
                                 preprocessed. <br> Wait a minute, while auxiliary
                                 proof generator goes
-                                <div class="input-control">
+                                <div id="ticker" class="tickerwrapper">
+                                    <ul class='list'>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                        <li class='listitem'>
+                                            <span>rrrrrrrrrrrrrrrrrrr</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="data-blob-input" class="input-control">
                                     <input type="text" class="required"
                                            autocomplete="off"
                                            value = ""
