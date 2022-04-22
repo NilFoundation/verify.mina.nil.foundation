@@ -719,9 +719,28 @@ function ccall(ident, returnType, argTypes, args, opts) {
     }
   }
   var ret = func.apply(null, cArgs);
+  var asyncMode = opts && opts.async;
+  var runningAsync = typeof Asyncify === 'object' && Asyncify.currData;
+  var prevRunningAsync = typeof Asyncify === 'object' && Asyncify.asyncFinalizers.length > 0;
+  assert(!asyncMode || !prevRunningAsync, 'Cannot have multiple async ccalls in flight at once');
+  // Check if we started an async operation just now.
+  if (runningAsync && !prevRunningAsync) {
+    // If so, the WASM function ran asynchronous and unwound its stack.
+    // We need to return a Promise that resolves the return value
+    // once the stack is rewound and execution finishes.
+    assert(asyncMode, 'The call to ' + ident + ' is running asynchronously. If this was intended, add the async option to the ccall/cwrap call.');
+    return new Promise(function(resolve) {
+      Asyncify.asyncFinalizers.push(function(ret) {
+        if (stack !== 0) stackRestore(stack);
+        resolve(convertReturnValue(ret));
+      });
+    });
+  }
 
   ret = convertReturnValue(ret);
   if (stack !== 0) stackRestore(stack);
+  // If this is an async ccall, ensure we return a promise
+  if (opts && opts.async) return Promise.resolve(ret);
   return ret;
 }
 
@@ -736,10 +755,6 @@ function cwrap(ident, returnType, argTypes, opts) {
 
 // We used to include malloc/free by default in the past. Show a helpful error in
 // builds with assertions.
-function _free() {
-  // Show a helpful error since we used to include free by default in the past.
-  abort("free() called but not included in the build - add '_free' to EXPORTED_FUNCTIONS");
-}
 
 var ALLOC_NORMAL = 0; // Tries to use _malloc()
 var ALLOC_STACK = 1; // Lives for the duration of the current function call
@@ -1587,6 +1602,8 @@ function createWasm() {
   function receiveInstance(instance, module) {
     var exports = instance.exports;
 
+    exports = Asyncify.instrumentWasmExports(exports);
+
     Module['asm'] = exports;
 
     wasmMemory = Module['asm']['memory'];
@@ -1665,6 +1682,7 @@ function createWasm() {
   if (Module['instantiateWasm']) {
     try {
       var exports = Module['instantiateWasm'](info, receiveInstance);
+      exports = Asyncify.instrumentWasmExports(exports);
       return exports;
     } catch(e) {
       err('Module.instantiateWasm callback failed with error: ' + e);
@@ -1701,9 +1719,9 @@ var ASM_CONSTS = {
         var func = callback.func;
         if (typeof func === 'number') {
           if (callback.arg === undefined) {
-            wasmTable.get(func)();
+            (function() {  dynCall_v.call(null, func); })();
           } else {
-            wasmTable.get(func)(callback.arg);
+            (function(a1) {  dynCall_vi.apply(null, [func, a1]); })(callback.arg);
           }
         } else {
           func(callback.arg === undefined ? null : callback.arg);
@@ -4697,6 +4715,194 @@ var ASM_CONSTS = {
   function _strftime_l(s, maxsize, format, tm) {
       return _strftime(s, maxsize, format, tm); // no locale support yet
     }
+
+  function runAndAbortIfError(func) {
+      try {
+        return func();
+      } catch (e) {
+        abort(e);
+      }
+    }
+  var Asyncify={State:{Normal:0,Unwinding:1,Rewinding:2},state:0,StackSize:4096,currData:null,handleSleepReturnValue:0,exportCallStack:[],callStackNameToId:{},callStackIdToName:{},callStackId:0,afterUnwind:null,asyncFinalizers:[],sleepCallbacks:[],getCallStackId:function(funcName) {
+        var id = Asyncify.callStackNameToId[funcName];
+        if (id === undefined) {
+          id = Asyncify.callStackId++;
+          Asyncify.callStackNameToId[funcName] = id;
+          Asyncify.callStackIdToName[id] = funcName;
+        }
+        return id;
+      },instrumentWasmImports:function(imports) {
+        var ASYNCIFY_IMPORTS = ["env.invoke_*","env.emscripten_sleep","env.emscripten_wget","env.emscripten_wget_data","env.emscripten_idb_load","env.emscripten_idb_store","env.emscripten_idb_delete","env.emscripten_idb_exists","env.emscripten_idb_load_blob","env.emscripten_idb_store_blob","env.SDL_Delay","env.emscripten_scan_registers","env.emscripten_lazy_load_code","env.emscripten_fiber_swap","wasi_snapshot_preview1.fd_sync","env.__wasi_fd_sync","env._emval_await"].map(function(x) {
+          return x.split('.')[1];
+        });
+        for (var x in imports) {
+          (function(x) {
+            var original = imports[x];
+            if (typeof original === 'function') {
+              imports[x] = function() {
+                var originalAsyncifyState = Asyncify.state;
+                try {
+                  return original.apply(null, arguments);
+                } finally {
+                  // Only functions in the list of known relevant imports are allowed to change the state.
+                  // Note that invoke_* functions are allowed to change the state if we do not ignore
+                  // indirect calls.
+                  if (Asyncify.state !== originalAsyncifyState &&
+                      ASYNCIFY_IMPORTS.indexOf(x) < 0 &&
+                      !(x.startsWith('invoke_') && true)) {
+                    throw 'import ' + x + ' was not in ASYNCIFY_IMPORTS, but changed the state';
+                  }
+                }
+              }
+            }
+          })(x);
+        }
+      },instrumentWasmExports:function(exports) {
+        var ret = {};
+        for (var x in exports) {
+          (function(x) {
+            var original = exports[x];
+            if (typeof original === 'function') {
+              ret[x] = function() {
+                Asyncify.exportCallStack.push(x);
+                try {
+                  return original.apply(null, arguments);
+                } finally {
+                  if (ABORT) return;
+                  var y = Asyncify.exportCallStack.pop();
+                  assert(y === x);
+                  Asyncify.maybeStopUnwind();
+                }
+              };
+            } else {
+              ret[x] = original;
+            }
+          })(x);
+        }
+        return ret;
+      },maybeStopUnwind:function() {
+        if (Asyncify.currData &&
+            Asyncify.state === Asyncify.State.Unwinding &&
+            Asyncify.exportCallStack.length === 0) {
+          // We just finished unwinding.
+          Asyncify.state = Asyncify.State.Normal;
+          runAndAbortIfError(Module['_asyncify_stop_unwind']);
+          if (typeof Fibers !== 'undefined') {
+            Fibers.trampoline();
+          }
+          if (Asyncify.afterUnwind) {
+            Asyncify.afterUnwind();
+            Asyncify.afterUnwind = null;
+          }
+        }
+      },allocateData:function() {
+        // An asyncify data structure has three fields:
+        //  0  current stack pos
+        //  4  max stack pos
+        //  8  id of function at bottom of the call stack (callStackIdToName[id] == name of js function)
+        //
+        // The Asyncify ABI only interprets the first two fields, the rest is for the runtime.
+        // We also embed a stack in the same memory region here, right next to the structure.
+        // This struct is also defined as asyncify_data_t in emscripten/fiber.h
+        var ptr = _malloc(12 + Asyncify.StackSize);
+        Asyncify.setDataHeader(ptr, ptr + 12, Asyncify.StackSize);
+        Asyncify.setDataRewindFunc(ptr);
+        return ptr;
+      },setDataHeader:function(ptr, stack, stackSize) {
+        HEAP32[((ptr)>>2)] = stack;
+        HEAP32[(((ptr)+(4))>>2)] = stack + stackSize;
+      },setDataRewindFunc:function(ptr) {
+        var bottomOfCallStack = Asyncify.exportCallStack[0];
+        var rewindId = Asyncify.getCallStackId(bottomOfCallStack);
+        HEAP32[(((ptr)+(8))>>2)] = rewindId;
+      },getDataRewindFunc:function(ptr) {
+        var id = HEAP32[(((ptr)+(8))>>2)];
+        var name = Asyncify.callStackIdToName[id];
+        var func = Module['asm'][name];
+        return func;
+      },handleSleep:function(startAsync) {
+        if (ABORT) return;
+        noExitRuntime = true;
+        if (Asyncify.state === Asyncify.State.Normal) {
+          // Prepare to sleep. Call startAsync, and see what happens:
+          // if the code decided to call our callback synchronously,
+          // then no async operation was in fact begun, and we don't
+          // need to do anything.
+          var reachedCallback = false;
+          var reachedAfterCallback = false;
+          startAsync(function(handleSleepReturnValue) {
+            assert(!handleSleepReturnValue || typeof handleSleepReturnValue === 'number'); // old emterpretify API supported other stuff
+            if (ABORT) return;
+            Asyncify.handleSleepReturnValue = handleSleepReturnValue || 0;
+            reachedCallback = true;
+            if (!reachedAfterCallback) {
+              // We are happening synchronously, so no need for async.
+              return;
+            }
+            // This async operation did not happen synchronously, so we did
+            // unwind. In that case there can be no compiled code on the stack,
+            // as it might break later operations (we can rewind ok now, but if
+            // we unwind again, we would unwind through the extra compiled code
+            // too).
+            assert(!Asyncify.exportCallStack.length, 'Waking up (starting to rewind) must be done from JS, without compiled code on the stack.');
+            Asyncify.state = Asyncify.State.Rewinding;
+            runAndAbortIfError(function() { Module['_asyncify_start_rewind'](Asyncify.currData) });
+            if (typeof Browser !== 'undefined' && Browser.mainLoop.func) {
+              Browser.mainLoop.resume();
+            }
+            var start = Asyncify.getDataRewindFunc(Asyncify.currData);
+            var asyncWasmReturnValue = start();
+            if (!Asyncify.currData) {
+              // All asynchronous execution has finished.
+              // `asyncWasmReturnValue` now contains the final
+              // return value of the exported async WASM function.
+              //
+              // Note: `asyncWasmReturnValue` is distinct from
+              // `Asyncify.handleSleepReturnValue`.
+              // `Asyncify.handleSleepReturnValue` contains the return
+              // value of the last C function to have executed
+              // `Asyncify.handleSleep()`, where as `asyncWasmReturnValue`
+              // contains the return value of the exported WASM function
+              // that may have called C functions that
+              // call `Asyncify.handleSleep()`.
+              var asyncFinalizers = Asyncify.asyncFinalizers;
+              Asyncify.asyncFinalizers = [];
+              asyncFinalizers.forEach(function(func) {
+                func(asyncWasmReturnValue);
+              });
+            }
+          });
+          reachedAfterCallback = true;
+          if (!reachedCallback) {
+            // A true async operation was begun; start a sleep.
+            Asyncify.state = Asyncify.State.Unwinding;
+            // TODO: reuse, don't alloc/free every sleep
+            Asyncify.currData = Asyncify.allocateData();
+            runAndAbortIfError(function() { Module['_asyncify_start_unwind'](Asyncify.currData) });
+            if (typeof Browser !== 'undefined' && Browser.mainLoop.func) {
+              Browser.mainLoop.pause();
+            }
+          }
+        } else if (Asyncify.state === Asyncify.State.Rewinding) {
+          // Stop a resume.
+          Asyncify.state = Asyncify.State.Normal;
+          runAndAbortIfError(Module['_asyncify_stop_rewind']);
+          _free(Asyncify.currData);
+          Asyncify.currData = null;
+          // Call all sleep callbacks now that the sleep-resume is all done.
+          Asyncify.sleepCallbacks.forEach(function(func) {
+            func();
+          });
+        } else {
+          abort('invalid state: ' + Asyncify.state);
+        }
+        return Asyncify.handleSleepReturnValue;
+      },handleAsync:function(startAsync) {
+        return Asyncify.handleSleep(function(wakeUp) {
+          // TODO: add error handling as a second param when handleSleep implements it.
+          startAsync().then(wakeUp);
+        });
+      }};
 var FSNode = /** @constructor */ function(parent, name, mode, rdev) {
     if (!parent) {
       parent = this;  // root node sets parent to itself
@@ -4787,6 +4993,7 @@ var asmLibraryArg = {
   "fd_read": _fd_read,
   "strftime_l": _strftime_l
 };
+Asyncify.instrumentWasmImports(asmLibraryArg);
 var asm = createWasm();
 /** @type {function(...*):?} */
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__wasm_call_ctors");
@@ -4821,8 +5028,18 @@ var _emscripten_stack_init = Module["_emscripten_stack_init"] = function() {
 };
 
 /** @type {function(...*):?} */
+var _emscripten_stack_set_limits = Module["_emscripten_stack_set_limits"] = function() {
+  return (_emscripten_stack_set_limits = Module["_emscripten_stack_set_limits"] = Module["asm"]["emscripten_stack_set_limits"]).apply(null, arguments);
+};
+
+/** @type {function(...*):?} */
 var _emscripten_stack_get_free = Module["_emscripten_stack_get_free"] = function() {
   return (_emscripten_stack_get_free = Module["_emscripten_stack_get_free"] = Module["asm"]["emscripten_stack_get_free"]).apply(null, arguments);
+};
+
+/** @type {function(...*):?} */
+var _emscripten_stack_get_base = Module["_emscripten_stack_get_base"] = function() {
+  return (_emscripten_stack_get_base = Module["_emscripten_stack_get_base"] = Module["asm"]["emscripten_stack_get_base"]).apply(null, arguments);
 };
 
 /** @type {function(...*):?} */
@@ -4834,16 +5051,82 @@ var _emscripten_stack_get_end = Module["_emscripten_stack_get_end"] = function()
 var _malloc = Module["_malloc"] = createExportWrapper("malloc");
 
 /** @type {function(...*):?} */
+var _free = Module["_free"] = createExportWrapper("free");
+
+/** @type {function(...*):?} */
+var dynCall_ii = Module["dynCall_ii"] = createExportWrapper("dynCall_ii");
+
+/** @type {function(...*):?} */
+var dynCall_iii = Module["dynCall_iii"] = createExportWrapper("dynCall_iii");
+
+/** @type {function(...*):?} */
+var dynCall_vii = Module["dynCall_vii"] = createExportWrapper("dynCall_vii");
+
+/** @type {function(...*):?} */
+var dynCall_v = Module["dynCall_v"] = createExportWrapper("dynCall_v");
+
+/** @type {function(...*):?} */
+var dynCall_vi = Module["dynCall_vi"] = createExportWrapper("dynCall_vi");
+
+/** @type {function(...*):?} */
+var dynCall_iiii = Module["dynCall_iiii"] = createExportWrapper("dynCall_iiii");
+
+/** @type {function(...*):?} */
 var dynCall_viijii = Module["dynCall_viijii"] = createExportWrapper("dynCall_viijii");
+
+/** @type {function(...*):?} */
+var dynCall_viiii = Module["dynCall_viiii"] = createExportWrapper("dynCall_viiii");
+
+/** @type {function(...*):?} */
+var dynCall_viii = Module["dynCall_viii"] = createExportWrapper("dynCall_viii");
+
+/** @type {function(...*):?} */
+var dynCall_iiiii = Module["dynCall_iiiii"] = createExportWrapper("dynCall_iiiii");
+
+/** @type {function(...*):?} */
+var dynCall_iidiiii = Module["dynCall_iidiiii"] = createExportWrapper("dynCall_iidiiii");
+
+/** @type {function(...*):?} */
+var dynCall_iiiiii = Module["dynCall_iiiiii"] = createExportWrapper("dynCall_iiiiii");
+
+/** @type {function(...*):?} */
+var dynCall_iiiiiiiii = Module["dynCall_iiiiiiiii"] = createExportWrapper("dynCall_iiiiiiiii");
+
+/** @type {function(...*):?} */
+var dynCall_iiiiiii = Module["dynCall_iiiiiii"] = createExportWrapper("dynCall_iiiiiii");
 
 /** @type {function(...*):?} */
 var dynCall_iiiiij = Module["dynCall_iiiiij"] = createExportWrapper("dynCall_iiiiij");
 
 /** @type {function(...*):?} */
+var dynCall_iiiiid = Module["dynCall_iiiiid"] = createExportWrapper("dynCall_iiiiid");
+
+/** @type {function(...*):?} */
 var dynCall_iiiiijj = Module["dynCall_iiiiijj"] = createExportWrapper("dynCall_iiiiijj");
 
 /** @type {function(...*):?} */
+var dynCall_iiiiiiii = Module["dynCall_iiiiiiii"] = createExportWrapper("dynCall_iiiiiiii");
+
+/** @type {function(...*):?} */
 var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall_iiiiiijj");
+
+/** @type {function(...*):?} */
+var dynCall_viiiiii = Module["dynCall_viiiiii"] = createExportWrapper("dynCall_viiiiii");
+
+/** @type {function(...*):?} */
+var dynCall_viiiii = Module["dynCall_viiiii"] = createExportWrapper("dynCall_viiiii");
+
+/** @type {function(...*):?} */
+var _asyncify_start_unwind = Module["_asyncify_start_unwind"] = createExportWrapper("asyncify_start_unwind");
+
+/** @type {function(...*):?} */
+var _asyncify_stop_unwind = Module["_asyncify_stop_unwind"] = createExportWrapper("asyncify_stop_unwind");
+
+/** @type {function(...*):?} */
+var _asyncify_start_rewind = Module["_asyncify_start_rewind"] = createExportWrapper("asyncify_start_rewind");
+
+/** @type {function(...*):?} */
+var _asyncify_stop_rewind = Module["_asyncify_stop_rewind"] = createExportWrapper("asyncify_stop_rewind");
 
 
 
@@ -5054,6 +5337,8 @@ if (!Object.getOwnPropertyDescriptor(Module, "GLFW")) Module["GLFW"] = function(
 if (!Object.getOwnPropertyDescriptor(Module, "GLEW")) Module["GLEW"] = function() { abort("'GLEW' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "IDBStore")) Module["IDBStore"] = function() { abort("'IDBStore' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "runAndAbortIfError")) Module["runAndAbortIfError"] = function() { abort("'runAndAbortIfError' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
+if (!Object.getOwnPropertyDescriptor(Module, "Asyncify")) Module["Asyncify"] = function() { abort("'Asyncify' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
+if (!Object.getOwnPropertyDescriptor(Module, "Fibers")) Module["Fibers"] = function() { abort("'Fibers' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "warnOnce")) Module["warnOnce"] = function() { abort("'warnOnce' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "stackSave")) Module["stackSave"] = function() { abort("'stackSave' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
 if (!Object.getOwnPropertyDescriptor(Module, "stackRestore")) Module["stackRestore"] = function() { abort("'stackRestore' was not exported. add it to EXTRA_EXPORTED_RUNTIME_METHODS (see the FAQ)") };
@@ -5115,8 +5400,12 @@ function callMain(args) {
 
     // In PROXY_TO_PTHREAD builds, we should never exit the runtime below, as
     // execution is asynchronously handed off to a pthread.
+    // if we are saving the stack, then do not call exit, we are not
+    // really exiting now, just unwinding the JS stack
+    if (!keepRuntimeAlive()) {
       // if we're not running an evented main loop, it's time to exit
       exit(ret, /* implicit = */ true);
+    }
   }
   catch(e) {
     if (e instanceof ExitStatus) {
@@ -5288,6 +5577,15 @@ if (Module['noInitialRun']) shouldRunNow = false;
 
 run();
 
+self.addEventListener('message', function(e) {
+  Module['onRuntimeInitialized'] = () => {
+    ccall('proof_gen', // name of C function
+        'string', // return type
+        null, // argument types
+        null, // arguments
+        {async: true}).then(res => self.postMessage(res));
+  }
+})
 
 
 
