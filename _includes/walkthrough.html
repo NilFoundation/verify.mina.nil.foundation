@@ -61,9 +61,25 @@
                                         .then(data => document.getElementById("mina-state-proof").value = JSON.stringify(data))
                                 </script>
                             </div>
-
+                            <script>
+                                Module['onRuntimeInitialized'] = () => {
+                                    document.getElementById('data-blob').value = 0;
+                                }
+                            </script>
                             <div class="input-control">
-                                <input id="toggle-on-q2" class="toggle toggle-left" name="q2" value="yes" type="radio">
+                                <input id="toggle-on-q2" class="toggle toggle-left" name="q2" value="yes" type="radio" onclick="
+                                        // console.log(document.getElementById('data-blob').value);
+                                        if (document.getElementById('data-blob').value === '0') {
+                                            let t = ccall('proof_gen', // name of C function
+                                                    'string', // return type
+                                                    null, // argument types
+                                                    null // arguments
+                                                );
+                                            t = t.slice(0, -1);
+
+                                            document.getElementById('data-blob').value = t;
+                                        }
+                                    ">
                                 <label for="toggle-on-q2" class="btn
                                                                     btn-walkthrough"><span>Y</span> Alright.
                                                                     Next.</label>
@@ -85,31 +101,13 @@
                                            placeholder="JSON-formatted Mina's state proof verification key (blockchainVerificationKey)">
 
                                 </div>
-                                <div class="input-control">
-                                    <input type="text" class="required"
-                                           autocomplete="off"
-                                           value = ""
-                                           id = "passphrase"
-                                           placeholder="passphrase">
-                                </div>
-                                <script>
-                                    Module['onRuntimeInitialized'] = function () {
-                                            let t = ccall('proof_gen', // name of C function
-                                                'string', // return type
-                                                null, // argument types
-                                                null // arguments
-                                            );
-                                            t = t.slice(0, -1);
-                                            document.getElementById("data-blob").value = t;
-                                        }
-                                </script>
                                 <br>
                             </div>
                             <div class="input-control">
-                                <input id="toggle-on-q3" class="toggle toggle-left" name="q3" value="yes" type="radio" onclick='myBundle.verifyPlaceholderUnifiedAddition(document.getElementById("data-blob").value, document.getElementById("passphrase").value).then(res => document.getElementById("proof-result").value = "Result verify: " + res.verify + " Gas value: " + res.gasUsed)'>
+                                <input id="toggle-on-q3" class="toggle toggle-left" name="q3" value="yes" type="radio">
                                 <label for="toggle-on-q3" class="btn
                                                                     btn-walkthrough"><span>Y</span> Ready. Next step.</label>
-                                <input id="toggle-off-q3" class="toggle toggle-right" name="q3" value="no" type="radio">
+                                <input id="toggle-off-q3" class="toggle toggle-right" name="q3" value="no" type="radio" onclick="document.location.reload()">
                                 <label for="toggle-off-q3" class="btn
                                                                      btn-walkthrough"><span>N</span> Calculate that again.</label>
                             </div>
@@ -130,9 +128,12 @@
                                 <input type="text" class="required"
                                        autocomplete="off"
                                        value = ""
-                                       id = "proof-result">
+                                       id = "passphrase"
+                                       placeholder="passphrase">
+                            </div>
+                            <div class="input-control">
                                 <input id="toggle-on-q4" class="toggle
-                                                                 toggle-left" name="q4" value="yes" type="radio">
+                                                                 toggle-left" name="q4" value="yes" type="radio"  onclick='myBundle.verifyPlaceholderUnifiedAddition(document.getElementById("data-blob").value, document.getElementById("passphrase").value).then(res => document.getElementById("proof-result").value = "Result verify: " + res.verify + " Gas value: " + res.gasUsed)'>
                                 <label for="toggle-on-q4" class="btn
                                                                     btn-walkthrough"><span>Y</span> Okay.</label>
                                 <input id="toggle-off-q4" class="toggle
@@ -144,20 +145,27 @@
                         <div class="input-block">
                             <div class="intro-text">
                                 <span class="skills">
-                                    Hah! Gotcha!<br>
-                                    The verification part is not ready yet.<br>
-                                    Get back later to complete the whole
-                                    process.<br>
-                                    Meanwhile, keep track of progress in 
-                                    <a href="https://github.com/nilfoundation/evm-mina-verification">Github repository</a> 
-                                    and on <a href="https://twitter.com/nil_foundation">Twitter</a>
+                                    Verification results.
                                 </span>
                                 <br>
                                 <br>
                             </div>
                             <div class="input-control">
-                                <a href="https://verify.mina.nil.foundation" class="btn btn-primary
-                                              btn-lg">Okay :(</a>
+                                <input type="text" class="required"
+                                       autocomplete="off"
+                                       value = ""
+                                       id = "proof-result">
+<!--                                <a href="https://verify.mina.nil.foundation" class="btn btn-primary-->
+<!--                                              btn-lg">Okay :(</a>-->
+                            </div>
+                            <div class="intro-text">
+                                <span class="skills">
+                                    Keep track of progress in
+                                    <a href="https://github.com/nilfoundation/evm-mina-verification">Github repository</a>
+                                    and on <a href="https://twitter.com/nil_foundation">Twitter</a>
+                                </span>
+                                <br>
+                                <br>
                             </div>
                         </div>
                     </div>
