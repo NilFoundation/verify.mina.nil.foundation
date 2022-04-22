@@ -63,8 +63,9 @@
                                             fetch ("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/bin/aux-proof-gen/src/data/kimchi_const.json")
                                                 .then(result => result.json())
                                                 .then(data => {
+                                                    document.getElementById("mina-json-correctness").value = 'Correct!';
                                                     try {
-                                                        Module['onRuntimeInitialized'] = () => {
+                                                        if (document.getElementById('data-blob').value === '0') {
                                                             t0 = myBundle.ccall('parsing_json', // name of C function
                                                                 "string", // return type
                                                                 ["string", "string"], // argument types
