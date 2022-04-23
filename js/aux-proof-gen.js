@@ -5585,8 +5585,4 @@ self.addEventListener('message', function(e) {
         null, // arguments
         {async: true}).then(res => self.postMessage(res));
   }
-})
-
-
-
-
+});
