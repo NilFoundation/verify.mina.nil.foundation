@@ -4999,10 +4999,13 @@ var asm = createWasm();
 var ___wasm_call_ctors = Module["___wasm_call_ctors"] = createExportWrapper("__wasm_call_ctors");
 
 /** @type {function(...*):?} */
-var _proof_gen = Module["_proof_gen"] = createExportWrapper("proof_gen");
+var _generate_proof = Module["_generate_proof"] = createExportWrapper("generate_proof");
 
 /** @type {function(...*):?} */
-var _parsing_json = Module["_parsing_json"] = createExportWrapper("parsing_json");
+var _parse_proof = Module["_parse_proof"] = createExportWrapper("parse_proof");
+
+/** @type {function(...*):?} */
+var _parse_pconst = Module["_parse_pconst"] = createExportWrapper("parse_pconst");
 
 /** @type {function(...*):?} */
 var _main = Module["_main"] = createExportWrapper("main");
@@ -5577,12 +5580,7 @@ if (Module['noInitialRun']) shouldRunNow = false;
 
 run();
 
-self.addEventListener('message', function(e) {
-  Module['onRuntimeInitialized'] = () => {
-    ccall('proof_gen', // name of C function
-        'string', // return type
-        null, // argument types
-        null, // arguments
-        {async: true}).then(res => self.postMessage(res));
-  }
-});
+
+
+
+
