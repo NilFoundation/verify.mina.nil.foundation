@@ -47,8 +47,10 @@ $.fn.upform = function() {
 
             if (field.parent().hasClass('alert-danger')) {
                 $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
+                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "0.25"});
             } else {
                 $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
+                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "1"});
             }
         });
 
@@ -58,8 +60,10 @@ $.fn.upform = function() {
             if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
                 $('#mina-state-proof-const').parent().hasClass('alert-danger')) {
                 $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
+                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "0.25"});
             } else {
                 $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
+                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "1"});
             }
         });
 
@@ -69,8 +73,10 @@ $.fn.upform = function() {
             if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
                 $('#mina-state-proof-const').parent().hasClass('alert-danger')) {
                 $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
+                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "0.25"});
             } else {
                 $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
+                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "1"});
             }
         });
 
