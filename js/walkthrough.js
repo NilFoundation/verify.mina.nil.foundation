@@ -2,29 +2,37 @@ $.fn.upform = function() {
     var $this = $(this);
     var container = $this.find(".upform-main");
 
-    function checkCorrectness(proof, vk, pconst) {
+    function checkProofCorrectness(proof) {
         try {
-            t0 = Module.ccall('parsing_json', // name of C function
+            t0 = Module.ccall('parse_proof', // name of C function
                 'string', // return type
-                ['string', 'string'], // argument types
-                [vk.val(), pconst.val()]);
+                ['string'], // argument types
+                [proof.val()]);
             proof.parent().removeClass("alert-danger");
             proof.parent().addClass("alert-success");
-
-            vk.parent().removeClass("alert-danger");
-            vk.parent().addClass("alert-success");
-
-            pconst.parent().removeClass("alert-danger");
-            pconst.parent().addClass("alert-success");
         } catch (e) {
             proof.parent().removeClass("alert-success");
             proof.parent().addClass("alert-danger");
+        }
+    }
 
+    function checkProofVkCorrectness(vk, vk_const) {
+        try {
+            t0 = Module.ccall('parse_pconst', // name of C function
+                'string', // return type
+                ['string', 'string'], // argument types
+                [vk.val(), vk_const.val()]);
+            vk.parent().removeClass("alert-danger");
+            vk.parent().addClass("alert-success");
+
+            vk_const.parent().removeClass("alert-danger");
+            vk_const.parent().addClass("alert-success");
+        } catch (e) {
             vk.parent().removeClass("alert-success");
             vk.parent().addClass("alert-danger");
 
-            pconst.parent().removeClass("alert-success");
-            pconst.parent().addClass("alert-danger");
+            vk_const.parent().removeClass("alert-success");
+            vk_const.parent().addClass("alert-danger");
         }
     }
 
@@ -34,27 +42,41 @@ $.fn.upform = function() {
         $(container).find('.tickerwrapper').css({"display": "none"});
 
         $('#mina-state-proof').on('change', function() {
-            checkCorrectness($('#mina-state-proof'), 
-                $('#mina-state-proof-vk'), 
-                $('#mina-state-proof-const'))
+            var field = $('#mina-state-proof');
+            checkProofCorrectness(field);
+
+            if (field.parent().hasClass('alert-danger')) {
+                $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
+            } else {
+                $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
+            }
         });
 
         $('#mina-state-proof-vk').on('change', function() {
-            checkCorrectness($('#mina-state-proof'), 
-                $('#mina-state-proof-vk'), 
-                $('#mina-state-proof-const'))
+            checkProofVkCorrectness($('#mina-state-proof-vk'), $('#mina-state-proof-const'));
+
+            if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
+                $('#mina-state-proof-const').parent().hasClass('alert-danger')) {
+                $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
+            } else {
+                $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
+            }
         });
 
         $('#mina-state-proof-const').on('change', function() {
-            checkCorrectness($('#mina-state-proof'), 
-                $('#mina-state-proof-vk'), 
-                $('#mina-state-proof-const'))
+            checkProofVkCorrectness($('#mina-state-proof-vk'), $('#mina-state-proof-const'));
+
+            if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
+                $('#mina-state-proof-const').parent().hasClass('alert-danger')) {
+                $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
+            } else {
+                $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
+            }
         });
 
         $(container).find('.input-block input[name="q1"].toggle-left').on('click', async () => {
-            checkCorrectness($('#mina-state-proof'), 
-                $('#mina-state-proof-vk'), 
-                $('#mina-state-proof-const'));
+            checkProofCorrectness($('#mina-state-proof'));
+            checkProofVkCorrectness($('#mina-state-proof-vk'), $('#mina-state-proof-const'));
         });
 
         $(container).find('.input-block input[name="q2"].toggle-left').on('click', async () => {
@@ -112,30 +134,22 @@ $.fn.upform = function() {
     });
 
     $(container).find('.input-block input[type="radio"].toggle-left').change(function(e) {
-        if ($(this).attr('checked', true)) {
-            moveNext(this);
-        }
+        moveNext(this);
     });
 
     $(container).find('.input-block input[type="radio"].toggle-right').change(function(e) {
-        if ($(this).attr('checked', true)) {
-            movePrev(this);
-        }
+        movePrev(this);
     });
 
     $(container).find('.input-block input[type="radio"].toggle-left').keypress(function(e) {
         if (e.which == 89) {
-            if ($(this).attr('checked', false)) {
-                $(this).change();
-            }
+            $(this).change();
         }
     });
 
     $(container).find('.input-block input[type="radio"].toggle-right').keypress(function(e) {
         if (e.which == 78) {
-            if ($(this).attr('checked', true)) {
-                $(this).change();
-            }
+            $(this).change();
         }
     });
 
