@@ -2,21 +2,61 @@ $.fn.upform = function() {
     var $this = $(this);
     var container = $this.find(".upform-main");
 
+    function checkCorrectness(proof, vk, pconst) {
+        try {
+            t0 = Module.ccall('parsing_json', // name of C function
+                'string', // return type
+                ['string', 'string'], // argument types
+                [vk.val(), pconst.val()]);
+            proof.parent().removeClass("alert-danger");
+            proof.parent().addClass("alert-success");
+
+            vk.parent().removeClass("alert-danger");
+            vk.parent().addClass("alert-success");
+
+            pconst.parent().removeClass("alert-danger");
+            pconst.parent().addClass("alert-success");
+        } catch (e) {
+            proof.parent().removeClass("alert-success");
+            proof.parent().addClass("alert-danger");
+
+            vk.parent().removeClass("alert-success");
+            vk.parent().addClass("alert-danger");
+
+            pconst.parent().removeClass("alert-success");
+            pconst.parent().addClass("alert-danger");
+        }
+    }
+
     $(document).ready(function() {
         $(container).find(".input-block").first().click();
 
         $(container).find('.tickerwrapper').css({"display": "none"});
-        $(container).find('.input-block input[name="q1"].toggle-left').on('click', async () => {
-            try {
-                t0 = Module.ccall('parsing_json', // name of C function
-                    'string', // return type
-                    ['string', 'string'], // argument types
-                    [('#mina-state-proof').val(), ('#mina-state-proof-const').val()]);
-                document.getElementById('mina-json-correctness').value = 'Correct!';
-            } catch (e) {
-                document.getElementById('mina-json-correctness').value = 'Not correct!';
-            }
+
+        $('#mina-state-proof').on('change', function() {
+            checkCorrectness($('#mina-state-proof'), 
+                $('#mina-state-proof-vk'), 
+                $('#mina-state-proof-const'))
         });
+
+        $('#mina-state-proof-vk').on('change', function() {
+            checkCorrectness($('#mina-state-proof'), 
+                $('#mina-state-proof-vk'), 
+                $('#mina-state-proof-const'))
+        });
+
+        $('#mina-state-proof-const').on('change', function() {
+            checkCorrectness($('#mina-state-proof'), 
+                $('#mina-state-proof-vk'), 
+                $('#mina-state-proof-const'))
+        });
+
+        $(container).find('.input-block input[name="q1"].toggle-left').on('click', async () => {
+            checkCorrectness($('#mina-state-proof'), 
+                $('#mina-state-proof-vk'), 
+                $('#mina-state-proof-const'));
+        });
+
         $(container).find('.input-block input[name="q2"].toggle-left').on('click', async () => {
 
             $(container).find('.tickerwrapper').css({"display": "block"});
@@ -30,6 +70,7 @@ $.fn.upform = function() {
             }
             worker.postMessage("");
         });
+
         $(container).find('.input-block input[name="q4"].toggle-left').on('click', async () => {
             myBundle.verifyPlaceholderUnifiedAddition(
                 $('#data-blob').val(), 
@@ -41,7 +82,7 @@ $.fn.upform = function() {
 
         fetch("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/proof_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json")
             .then(result => result.json())
-            .then(data => $('#mina-state-proof-base64').val(JSON.stringify(data)));
+            .then(data => $('#mina-state-proof').val(JSON.stringify(data)));
 
         fetch("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/bin/aux-proof-gen/src/data/kimchi_const.json")
             .then(result => result.json())
@@ -49,7 +90,7 @@ $.fn.upform = function() {
 
         fetch("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/vk_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json")
             .then(result => result.json())
-            .then(data => $('#mina-state-proof').val(JSON.stringify(data)));
+            .then(data => $('#mina-state-proof-vk').val(JSON.stringify(data)));
     });
 
     $($this).find("form").submit(function() {
@@ -120,8 +161,8 @@ $.fn.upform = function() {
     }
 
     function rescroll(e) {
-        $(window).scrollTo($(e), 200, {
-            offset: { left: 100, top: -200 },
+        $(window).scrollTo($(e), 150, {
+            offset: { left: 100, top: -150 },
             queue: false
         });
     }
