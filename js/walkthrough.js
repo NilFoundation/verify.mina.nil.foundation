@@ -41,7 +41,7 @@ $.fn.upform = function() {
 
         $(container).find('.tickerwrapper').css({"display": "none"});
 
-        $('#mina-state-proof').on('change', function() {
+        $('#mina-state-proof').on('input', function() {
             var field = $('#mina-state-proof');
             checkProofCorrectness(field);
 
@@ -52,7 +52,7 @@ $.fn.upform = function() {
             }
         });
 
-        $('#mina-state-proof-vk').on('change', function() {
+        $('#mina-state-proof-vk').on('input', function() {
             checkProofVkCorrectness($('#mina-state-proof-vk'), $('#mina-state-proof-const'));
 
             if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
@@ -63,7 +63,7 @@ $.fn.upform = function() {
             }
         });
 
-        $('#mina-state-proof-const').on('change', function() {
+        $('#mina-state-proof-const').on('input', function() {
             checkProofVkCorrectness($('#mina-state-proof-vk'), $('#mina-state-proof-const'));
 
             if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
@@ -89,8 +89,11 @@ $.fn.upform = function() {
                 $('#data-blob').val(e.data);
                 $(container).find('.tickerwrapper').css({"display": "none"});
                 $('#data-blob-input').css({"display": "block"});
+
+                $(container).find('.input-block input[name="q3"].toggle-left').removeAttr('disabled');
             }
             worker.postMessage("");
+            $(container).find('.input-block input[name="q3"].toggle-left').attr('disabled', 'disabled');
         });
 
         $(container).find('.input-block input[name="q4"].toggle-left').on('click', async () => {
@@ -165,6 +168,9 @@ $.fn.upform = function() {
     });
 
     function reinitState(e) {
+        $(container).find('.input-block input[type="radio"].toggle-left').prop( "checked", false);
+        $(container).find('.input-block input[type="radio"].toggle-right').prop( "checked", false);
+
         $(container).find(".input-block").removeClass("active");
 
         $(container).find(".input-block input").each(function() {
