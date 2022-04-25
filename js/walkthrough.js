@@ -47,10 +47,10 @@ $.fn.upform = function() {
 
             if (field.parent().hasClass('alert-danger')) {
                 $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
-                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "0.25"});
+                $(container).find('label[for="toggle-on-q2"]').css({"opacity": "0.25"});
             } else {
                 $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
-                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "1"});
+                $(container).find('label[for="toggle-on-q2"]').css({"opacity": "1"});
             }
         });
 
@@ -60,10 +60,10 @@ $.fn.upform = function() {
             if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
                 $('#mina-state-proof-const').parent().hasClass('alert-danger')) {
                 $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
-                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "0.25"});
+                $(container).find('label[for="toggle-on-q2"]').css({"opacity": "0.25"});
             } else {
                 $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
-                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "1"});
+                $(container).find('label[for="toggle-on-q2"]').css({"opacity": "1"});
             }
         });
 
@@ -73,10 +73,10 @@ $.fn.upform = function() {
             if ($('#mina-state-proof-vk').parent().hasClass('alert-danger') || 
                 $('#mina-state-proof-const').parent().hasClass('alert-danger')) {
                 $(container).find('.input-block input[name="q2"].toggle-left').attr('disabled', 'disabled');
-                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "0.25"});
+                $(container).find('label[for="toggle-on-q2"]').css({"opacity": "0.25"});
             } else {
                 $(container).find('.input-block input[name="q2"].toggle-left').removeAttr('disabled');
-                $(container).find('.btn label[for="toggle-on-q2"].btn-walkthrough').css({"opacity": "1"});
+                $(container).find('label[for="toggle-on-q2"]').css({"opacity": "1"});
             }
         });
 
@@ -86,20 +86,21 @@ $.fn.upform = function() {
         });
 
         $(container).find('.input-block input[name="q2"].toggle-left').on('click', async () => {
-
-            $(container).find('.tickerwrapper').css({"display": "block"});
+            $('#aux-proof-gen-pb').css({"display": "block"});
             $('#data-blob-input').css({"display": "none"});
 
             var worker = new Worker('../js/aux-proof-gen.js');
             worker.onmessage = function (e) {
                 $('#data-blob').val(e.data);
-                $(container).find('.tickerwrapper').css({"display": "none"});
+                $('#aux-proof-gen-pb').css({"display": "none"});
                 $('#data-blob-input').css({"display": "block"});
 
                 $(container).find('.input-block input[name="q3"].toggle-left').removeAttr('disabled');
+                $(container).find('label[for="toggle-on-q3"]').css({"opacity": "1"});
             }
             worker.postMessage("");
             $(container).find('.input-block input[name="q3"].toggle-left').attr('disabled', 'disabled');
+            $(container).find('label[for="toggle-on-q3"]').css({"opacity": "0.25"});
         });
 
         $(container).find('.input-block input[name="q4"].toggle-left').on('click', async () => {
