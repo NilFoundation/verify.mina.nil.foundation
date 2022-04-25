@@ -93,7 +93,15 @@ $.fn.upform = function() {
         });
 
         $('#mtmsk-btn').on('click', function() {
-            ethereum.request({ method: 'eth_requestAccounts' });
+            ethereum.request({ method: 'eth_requestAccounts' }).then(function() {
+                if (ethereum.isConnected()) {
+                    $('#mtmsk-btn').removeClass('btn-primary');
+                    $('#mtmsk-btn').addClass('btn-success');
+                } else {
+                    $('#mtmsk-btn').removeClass('btn-primary');
+                    $('#mtmsk-btn').addClass('btn-danger');
+                }
+            });
         });
 
         $(container).find('.input-block input[name="q2"].toggle-left').on('click', async () => {
