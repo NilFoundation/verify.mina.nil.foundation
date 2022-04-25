@@ -19,8 +19,7 @@ $.fn.upform = function() {
     //Created check function to see if the MetaMask extension is installed
     function isMetaMaskInstalled() {
         //Have to check the ethereum binding on the window object to see if it's installed
-        const { ethereum } = window;
-        return Boolean(ethereum && ethereum.isMetaMask);
+        return Boolean(typeof window.ethereum !== 'undefined');
     }
 
     function checkProofVkCorrectness(vk, vk_const) {
