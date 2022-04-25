@@ -16,6 +16,13 @@ $.fn.upform = function() {
         }
     }
 
+    //Created check function to see if the MetaMask extension is installed
+    function isMetaMaskInstalled() {
+        //Have to check the ethereum binding on the window object to see if it's installed
+        const { ethereum } = window;
+        return Boolean(ethereum && ethereum.isMetaMask);
+    }
+
     function checkProofVkCorrectness(vk, vk_const) {
         try {
             t0 = Module.ccall('parse_pconst', // name of C function
@@ -115,6 +122,14 @@ $.fn.upform = function() {
                     $('#proof-result-gas').val("Gas value: " + res.gasUsed);
                 })
         });
+
+        if (isMetaMaskInstalled()) {
+            $(container).find('.input-block input[name="q4"].toggle-left').remoteAttr('disabled');
+            $(container).find('label[for="toggle-on-q4"]').css({"opacity": "1"});
+        } else {
+            $(container).find('.input-block input[name="q4"].toggle-left').attr('disabled', 'disabled');
+            $(container).find('label[for="toggle-on-q4"]').css({"opacity": "0.25"});
+        }
 
         fetch("https://raw.githubusercontent.com/NilFoundation/evm-mina-verification/master/share/mina/proof_9b0369c27bb85c8ab2f8725c6e977eb27b53b826.json")
             .then(result => result.json())
