@@ -125,8 +125,17 @@ $.fn.upform = function() {
             myBundle.verifyPlaceholderUnifiedAddition(
                 $('#data-blob').val(), 
                 $('#passphrase').val()).then(res => {
-                    $('#proof-result').val("Result verify: " + res.verify); 
-                    $('#proof-result-gas').val("https://mumbai.polygonscan.com/tx/" + res.gasUsed);
+                    if (res.verify == true) {
+                        $('#res-tx').parent().removeClass('alert-danger');
+                        $('#res-tx').parent().removeClass('alert-info');
+                        $('#res-tx').parent().addClass('alert-success');
+                    } else {
+                        $('#res-tx').parent().removeClass('alert-sucecss');
+                        $('#res-tx').parent().removeClass('alert-info');
+                        $('#res-tx').parent().addClass('alert-danger');
+                    }
+                    $('#res-tx-link').attr("href", "https://mumbai.polygonscan.com/tx/" + res.gasUsed);
+                    $('#res-tx-link').text("https://mumbai.polygonscan.com/tx/" + res.gasUsed);
                 })
         });
 
