@@ -126,7 +126,7 @@ $.fn.upform = function() {
                 $('#data-blob').val(), 
                 $('#passphrase').val()).then(res => {
                     $('#proof-result').val("Result verify: " + res.verify); 
-                    $('#proof-result-gas').val("Gas value: " + res.gasUsed);
+                    $('#proof-result-gas').val("https://mumbai.polygonscan.com/tx/" + res.gasUsed);
                 })
         });
 
