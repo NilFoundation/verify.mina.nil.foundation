@@ -85,6 +85,10 @@ $.fn.upform = function() {
             checkProofVkCorrectness($('#mina-state-proof-vk'), $('#mina-state-proof-const'));
         });
 
+        $(container).find('.input-block input[name="metamask"].toggle-metamask').on('click', async () => {
+            ethereum.request({ method: 'eth_requestAccounts' });
+        });
+
         $(container).find('.input-block input[name="q2"].toggle-left').on('click', async () => {
             $('#aux-proof-gen-pb').css({"display": "block"});
             $('#data-blob-input').css({"display": "none"});
@@ -98,7 +102,7 @@ $.fn.upform = function() {
                 $(container).find('.input-block input[name="q3"].toggle-left').removeAttr('disabled');
                 $(container).find('label[for="toggle-on-q3"]').css({"opacity": "1"});
             }
-            worker.postMessage("");
+            worker.postMessage("generate_proof");
             $(container).find('.input-block input[name="q3"].toggle-left').attr('disabled', 'disabled');
             $(container).find('label[for="toggle-on-q3"]').css({"opacity": "0.25"});
         });
