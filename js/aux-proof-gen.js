@@ -5583,7 +5583,6 @@ run();
 self.addEventListener('message', function(e) {
   if (e.data === 'generate_proof') {
     Module['onRuntimeInitialized'] = () => {
-      console.log("here3")
       ccall('generate_proof', // name of C function
           'string', // return type
           null, // argument types
