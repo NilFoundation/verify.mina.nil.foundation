@@ -96,9 +96,15 @@ $.fn.upform = function() {
                 if (ethereum.isConnected()) {
                     $('#mtmsk-btn').removeClass('btn-primary');
                     $('#mtmsk-btn').addClass('btn-success');
+
+                    $(container).find('.input-block input[name="q4"].toggle-left').removeAttr('disabled');
+                    $(container).find('label[for="toggle-on-q4"]').css({"opacity": "1"});
                 } else {
                     $('#mtmsk-btn').removeClass('btn-primary');
                     $('#mtmsk-btn').addClass('btn-danger');
+
+                    $(container).find('.input-block input[name="q4"].toggle-left').attr('disabled', 'disabled');
+                    $(container).find('label[for="toggle-on-q4"]').css({"opacity": "0.25"});
                 }
             });
         });

@@ -86,7 +86,7 @@
                                                        value=""
                                                        id="data-blob"
                                                        placeholder="Mina's state
-                                                                       proof auxiliary proof"
+                                                                          proof auxiliary proof"
                                                        readonly>
                                 </div>
                                 <br>
@@ -102,23 +102,28 @@
                             <div class="intro-text">
                                 <span class="skills">
                                     Now it is time to submit the preprocessed
-                                    proof to <u>Polygon's Mumbai</u>.
-                                    <br>
-                                    Get your <u>Polygon's Mumbai</u> account ready.
+                                    proof to 
+                                    <a href="https://ropsten.etherscan.io">Ethereum's Ropsten</a> or 
+                                    <a href="https://mumbai.polygonscan.com">Polygon's Mumbai</a>.
                                     <br><br>
                                     Proof verification is going to cost about
                                     2.5m gas.
                                     <br><br>
-                                    You can get some Mumbai's MATIC tokens with
-                                    the faucet from <br>Polygon Technology:
+                                    You can get some rETH with some of these
+                                    faucets:<br>
+                                    <a href="https://faucet.metamask.io/">https://faucet.metamask.io/</a><br>
+                                    <a href="https://faucet.egorfine.com/">https://faucet.egorfine.com/</a>
+                                    <br><br>
+                                    Polygon's Mumbai test MATIC tokens can be
+                                    received from Polygon Technology's faucet:
                                     <a href="https://faucet.polygon.technology/">https://faucet.polygon.technology/</a>
                                 </span>
                                 <br>
                                 <br>
                             </div>
-                            <br><br>
+                            <br>
                             <div id="mtmsk-btn" class="btn btn-lg btn-primary"> Connect Metamask. </div>
-                            <br><br><br>
+                            <br><br>
                             <div class="input-control">
                                 <input id="toggle-on-q4" class="toggle
                                                                       toggle-left" name="q4" value="yes" type="radio">
@@ -127,7 +132,7 @@
                                 <input id="toggle-off-q4" class="toggle
                                                                        toggle-right" name="q4" value="no" type="radio">
                                 <label for="toggle-off-q4" class="btn           btn-walkthrough"><span>N</span>
-                                    I don't have that much.</label>
+                                    I want to re-generate the proof</label>
                             </div>
                         </div>
                         <div class="input-block">
@@ -156,14 +161,16 @@
                                 <br>
                             </div>
                             <div class="input-control">
-                                <input id="toggle-on-q4" class="toggle
-                                                                      toggle-left" name="q4" value="yes" type="radio">
-                                <label for="toggle-on-q4" class="btn
+                                <input id="toggle-on-q5" class="toggle
+                                                                      toggle-left"
+                                                         name="q5" value="yes" type="radio">
+                                <label for="toggle-on-q5" class="btn
                                                                     btn-walkthrough"><span>Y</span>
                                                                     So what?</label>
-                                <input id="toggle-off-q4" class="toggle
-                                                                       toggle-right" name="q4" value="no" type="radio">
-                                <label for="toggle-off-q4" class="btn           btn-walkthrough"><span>N</span>
+                                <input id="toggle-off-q5" class="toggle
+                                                                       toggle-right"
+                                                          name="q5" value="no" type="radio">
+                                <label for="toggle-off-q5" class="btn           btn-walkthrough"><span>N</span>
                                     I want to verify a different proof</label>
                             </div>
                         </div>
@@ -188,38 +195,34 @@
                                 <br><br>
                             </div>
                             <div class="input-control">
-                                <input id="toggle-on-q5" 
+                                <input id="toggle-on-q6" 
                                        class="toggle toggle-left"
-                                       name="q5" value="yes" type="radio">
-                                <label for="toggle-on-q5" 
+                                       name="q6" value="yes" type="radio">
+                                <label for="toggle-on-q6" 
                                        class="btn btn-walkthrough">
-                                    <span>Y</span>Cool! When?</label>
+                                    <span>Y</span> Cool! When?</label>
+                            </div>
+                        </div>
+                        <div class="input-block">
+                            <div class="intro-text">
+                                <span class="skills">
+                                    What there is left regarding this:<br><br>
+                                    1. Finalize the in-EVM verification part.<br><br>
+                                    2. Pass the audit.<br><br>
+                                    3. Implement the in-EVM Ouroboros chain
+                                    selection rule so Mina's plaintext data could be
+                                    put on EVM.
+                                    <br><br>
+                                    Meanwhile, stay tuned on <a href="https://twitter.com/nil_foundation">Twitter</a>
+                                    and keep track of progress in
+                                    <a href="https://github.com/nilfoundation/evm-mina-verification">Github
+                                        repository</a>.
+                                </span>
                             </div>
                         </div>
                     </div>
-                    <div class="input-block">
-                        <div class="intro-text">
-                            <span class="skills">
-                                What there is left regarding this:<br><br>
-                                1. Finalize the in-EVM verification part.<br>
-                                Proof generation part is more or less
-                                done.<br><br>
-                                2. Pass the audit.<br><br>
-                                3. Implement the in-EVM Ouroboros chain
-                                selection rule so Mina's plaintext data could be
-                                put on EVM.
-                                <br><br>
-                                Meanwhile, stay tuned on <a href="https://twitter.com/nil_foundation">Twitter</a>
-                                and keep track of progress in
-                                <a href="https://github.com/nilfoundation/evm-mina-verification">Github
-                                        repository</a>.
-                            </span>
-                        </div>
-                    </div>
-            </div>
                 </form>
+            </div>
         </div>
-    </div>
-    </div>
     </div>
 </header>
