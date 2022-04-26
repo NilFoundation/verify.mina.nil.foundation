@@ -75,9 +75,9 @@
                                 <br><br>
                                 <div class="progress" id="aux-proof-gen-pb">
                                     <div class="progress-bar progress-bar-striped active"
-                                                               role="progressbar" aria-valuenow="100"
-                                                                                  aria-valuemin="0" aria-valuemax="100"
-                                                                                                    style="width: 100%">
+                                         role="progressbar" aria-valuenow="100"
+                                                            aria-valuemin="0" aria-valuemax="100"
+                                                                              style="width: 100%">
                                     </div>
                                 </div>                                
                                 <div id="data-blob-input" class="input-control">
@@ -86,7 +86,7 @@
                                                        value=""
                                                        id="data-blob"
                                                        placeholder="Mina's state
-                                                       proof auxiliary proof"
+                                                                       proof auxiliary proof"
                                                        readonly>
                                 </div>
                                 <br>
@@ -105,9 +105,13 @@
                                     proof to <u>Polygon's Mumbai</u>.
                                     <br>
                                     Get your <u>Polygon's Mumbai</u> account ready.
-                                    <br>
+                                    <br><br>
                                     Proof verification is going to cost about
                                     2.5m gas.
+                                    <br><br>
+                                    You can get some Mumbai's MATIC tokens with
+                                    the faucet from <br>Polygon Technology:
+                                    <a href="https://faucet.polygon.technology/">https://faucet.polygon.technology/</a>
                                 </span>
                                 <br>
                                 <br>
@@ -135,23 +139,87 @@
                                 <br>
                             </div>
                             <div class="input-control alert alert-info">
-                                <div id="res-tx" class="input">
-                                   <a id="res-tx-link" href="#"></a>
+                                <div id="res-tx" class="skills">
+                                    <a id="res-tx-link" href="#"></a>
                                 </div>
                             </div>
                             <div class="intro-text">
                                 <span class="skills">
-                                    Keep track of progress in
-                                    <a href="https://github.com/nilfoundation/evm-mina-verification">Github repository</a>
-                                    and on <a href="https://twitter.com/nil_foundation">Twitter</a>
+                                    So, what does that mean?
+                                    <br><br>
+                                    We've just verified Mina's state proof on Polygon's Mumbai.
+                                    <br>
+                                    It means that Mina's state is now known to be valid on Polygon's Mumbai.
+                                    We still don't have the actual Mina's data on EVM, but now we can verify it's validity.
                                 </span>
                                 <br>
                                 <br>
                             </div>
+                            <div class="input-control">
+                                <input id="toggle-on-q4" class="toggle
+                                                                      toggle-left" name="q4" value="yes" type="radio">
+                                <label for="toggle-on-q4" class="btn
+                                                                    btn-walkthrough"><span>Y</span>
+                                                                    So what?</label>
+                                <input id="toggle-off-q4" class="toggle
+                                                                       toggle-right" name="q4" value="no" type="radio">
+                                <label for="toggle-off-q4" class="btn           btn-walkthrough"><span>N</span>
+                                    I want to verify a different proof</label>
+                            </div>
+                        </div>
+                        <div class="input-block">
+                            <div class="intro-text">
+                                <span class="skills">
+                                    That means every time someone tries to put some 
+                                    Mina's actual state data on EVM, we can:
+                                    <br><br>
+                                    1. Request a Mina's state Merkle tree
+                                    Poseidon hash.<br><br>
+                                    2. Verify the Kimchi state proof using it as a
+                                    public assignment.<br><br>
+                                    3. If the verification was successful, put
+                                    the data through the Ouroboros's chain selection 
+                                    rule to make sure replication packet was
+                                    finalized on Mina's side.<br><br>
+                                    4. If all those checks passed, we can use this new Mina's
+                                    state data on EVM side as plaintext one - to
+                                    request some account's balance for example.
+                                </span>
+                                <br><br>
+                            </div>
+                            <div class="input-control">
+                                <input id="toggle-on-q5" 
+                                       class="toggle toggle-left"
+                                       name="q5" value="yes" type="radio">
+                                <label for="toggle-on-q5" 
+                                       class="btn btn-walkthrough">
+                                    <span>Y</span>Cool! When?</label>
+                            </div>
                         </div>
                     </div>
-                </form>
+                    <div class="input-block">
+                        <div class="intro-text">
+                            <span class="skills">
+                                What there is left regarding this:<br><br>
+                                1. Finalize the in-EVM verification part.<br>
+                                Proof generation part is more or less
+                                done.<br><br>
+                                2. Pass the audit.<br><br>
+                                3. Implement the in-EVM Ouroboros chain
+                                selection rule so Mina's plaintext data could be
+                                put on EVM.
+                                <br><br>
+                                Meanwhile, stay tuned on <a href="https://twitter.com/nil_foundation">Twitter</a>
+                                and keep track of progress in
+                                <a href="https://github.com/nilfoundation/evm-mina-verification">Github
+                                        repository</a>.
+                            </span>
+                        </div>
+                    </div>
             </div>
+                </form>
         </div>
+    </div>
+    </div>
     </div>
 </header>
