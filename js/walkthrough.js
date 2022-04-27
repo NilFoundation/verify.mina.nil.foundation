@@ -128,9 +128,30 @@ $.fn.upform = function() {
         });
 
         $(container).find('.input-block input[name="q4"].toggle-left').on('click', async () => {
-            myBundle.verifyPlaceholderUnifiedAddition(
-                $('#data-blob').val(), 
-                $('#passphrase').val()).then(res => {
+            // Mainnet: 1
+            // Kovan: 42
+            // Ropsten: 3
+            // Rinkeby: 4
+            // Goerli: 5
+            // Polygon test our: 80001
+
+            let currentChain = null;
+            let refLing = ""
+            if (ethereum.networkVersion.toString() === "80001") {
+                currentChain = myBundle;
+                refLing = "https://mumbai.polygonscan.com/tx/"
+            }
+            if (ethereum.networkVersion.toString() === "3") {
+                currentChain = ropstenBundle;
+                refLing = "https://ropsten.etherscan.io/tx/"
+            }
+
+            if (currentChain == null) {
+                console.log("Choose another test network!")
+            } else {
+                currentChain.verifyPlaceholderUnifiedAddition(
+                    $('#data-blob').val(),
+                    $('#passphrase').val()).then(res => {
                     if (res.verify == true) {
                         $('#res-tx').parent().removeClass('alert-danger');
                         $('#res-tx').parent().removeClass('alert-info');
@@ -140,9 +161,10 @@ $.fn.upform = function() {
                         $('#res-tx').parent().removeClass('alert-info');
                         $('#res-tx').parent().addClass('alert-danger');
                     }
-                    $('#res-tx-link').attr("href", "https://mumbai.polygonscan.com/tx/" + res.gasUsed);
-                    $('#res-tx-link').text("https://mumbai.polygonscan.com/tx/" + res.gasUsed);
+                    $('#res-tx-link').attr("href", refLing + res.gasUsed);
+                    $('#res-tx-link').text(refLing + res.gasUsed);
                 })
+            }
         });
 
         if (isMetaMaskInstalled()) {
